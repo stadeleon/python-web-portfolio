@@ -1,0 +1,38 @@
+name: Ping Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      choice:
+        description: 'Select ENV'
+        required: true
+        default: 'google'
+        options:
+          - 'google'
+          - 'netflix'
+
+env:
+    google: "https://google.com"
+    netflix: "https://netflix.com"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check ENV variable
+        run: |
+          if [[ "${{ github.event.inputs.choice }}" == "google" ]]; then
+            echo ${{ github.event.inputs.choice }}
+            echo ${{ env.ENV }} ${{ github.event.inputs.choice }}
+            echo ${{ env[inputs.choice] }}
+            ping -c 5 google.com
+          elif [[ "${{ github.event.inputs.choice }}" == "netflix" ]]; then
+            echo ${{ github.event.inputs.choice }}
+            echo ${{ env.ENV }} ${{ github.event.inputs.choice }}
+            echo ${{ env[inputs.choice] }}
+            ping -c 5 netflix.com
+          else
+            echo "Invalid choice value: ${{ github.event.inputs.choice }}"
+            exit 1
+          fi

@@ -1,4 +1,3 @@
 # What is this project?
-This is a web app to showcase Python projects
-
-### Web development
+This is a wab app to showcase Python projects
+### Web developments

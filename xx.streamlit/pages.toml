@@ -1,0 +1,7 @@
+[[pages]]
+path = "main.py"
+name = "Home"
+
+[[pages]]
+path = "pages/contacts.py"
+name = "Contact Us"

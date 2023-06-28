@@ -1,6 +1,9 @@
 import streamlit as st
 import pandas
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 IMAGES_LOCATION = 'images'
 DATA_FRAME_FILE = 'data.csv'

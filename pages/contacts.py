@@ -6,8 +6,8 @@ with st.form(key='personal_email'):
     user_email = f"Portfolio sender <{st.text_input('Email')}>"
     message_body = st.text_area("Message")
     button = st.form_submit_button("Send it to me")
-    sender = 'My Private name <any.email@any.com>'
+    my_email = 'My Private name <any.email@any.com>'
 
     if button:
-        send_message(sender, user_email, message_body)
-
+        send_message(user_email, my_email, message_body)
+        st.info("Email successfully sent")

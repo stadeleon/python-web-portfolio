@@ -35,8 +35,8 @@ jobs:
       - name: Set Choice from Push Event
         id: set-choice
         run: |
-          echo "choice=${{ github.ref == 'refs/heads/main' && github.event_name == 'push' || github.event.inputs.choice || 'staging' }}" >> "$GITHUB_OUTPUT"
           echo "choice=${{ github.ref == 'refs/heads/main' && github.event_name == 'push' && github.event.inputs.choice || 'staging' }}" >> "$GITHUB_OUTPUT"
+          echo "choice=${{ github.ref == 'refs/heads/main' && github.event_name == 'push' || github.event.inputs.choice || 'staging' }}" >> "$GITHUB_OUTPUT"
           echo "version=$PANTS_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Use Choice Value

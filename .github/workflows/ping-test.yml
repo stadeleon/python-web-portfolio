@@ -1,38 +1,68 @@
 name: Ping Test
 
 on:
+  push:
+    branches:
+      - main
+
   workflow_dispatch:
     inputs:
       choice:
         description: 'Select ENV'
+        type: choice
         required: true
-        default: 'google'
+        default: 'dev'
         options:
-          - 'google'
-          - 'netflix'
+          - 'dev'
+          - 'staging'
+          - 'prod'
 
 env:
-    google: "https://google.com"
-    netflix: "https://netflix.com"
+    dev: "google.com"
+    staging: "netflix.com"
+    prod: "yahoo.com"
+    PROJECT_NAME: google.com
+    PANTS_VERSION: 3.3
 
+# Allow one concurrent run
 jobs:
   test:
     runs-on: ubuntu-latest
-
+    concurrency:
+      group: ${{ github.run_id }}-${{ github.event.inputs.choice }}-end-2-end
+      cancel-in-progress: true
     steps:
-      - name: Check ENV variable
+      - name: Set Choice from Push Event
+        id: set-choice
         run: |
-          if [[ "${{ github.event.inputs.choice }}" == "google" ]]; then
-            echo ${{ github.event.inputs.choice }}
-            echo ${{ env.ENV }} ${{ github.event.inputs.choice }}
-            echo ${{ env[inputs.choice] }}
-            ping -c 5 google.com
-          elif [[ "${{ github.event.inputs.choice }}" == "netflix" ]]; then
-            echo ${{ github.event.inputs.choice }}
-            echo ${{ env.ENV }} ${{ github.event.inputs.choice }}
-            echo ${{ env[inputs.choice] }}
-            ping -c 5 netflix.com
+          echo "choice=${{ github.ref == 'refs/heads/main' && github.event_name == 'push' || github.event.inputs.choice || 'staging' }}" >> "$GITHUB_OUTPUT"
+          echo "choice=${{ github.ref == 'refs/heads/main' && github.event_name == 'push' && github.event.inputs.choice || 'staging' }}" >> "$GITHUB_OUTPUT"
+          echo "version=$PANTS_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Use Choice Value
+        id: use-choice
+        run: |
+          echo "Pants-version = ${{ steps.set-choice.outputs.version }}"
+          if [[ -n "${{ inputs.choice }}" ]]; then
+            echo "Choice1: ${{ inputs.choice }}"
+            echo "Choice2: ${{ env[inputs.choice] }}"
+            echo "choice=${{ inputs.choice }}" >> "$GITHUB_ENV"
+            echo "choice=${{ inputs.choice }}" >> "$GITHUB_OUTPUT"
           else
-            echo "Invalid choice value: ${{ github.event.inputs.choice }}"
-            exit 1
+            echo "Choice1: ${{ steps.set-choice.outputs.choice }}"
+            echo "Choice2: ${{ env[steps.set-choice.outputs.choice] }}"
+            echo "choice=${{ steps.set-choice.outputs.choice }}" >> "$GITHUB_ENV"
+            echo "choice=${{ steps.set-choice.outputs.choice }}" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Check ENV variable
+        id: set-env
+        run: |
+          echo "Choice3: ${{ env.choice }}"
+          echo "Env-key ${{ env[steps.use-choice.outputs.choice] }}"
+          echo "PROJECT_NAME=${{ env[env.choice] }}" >> "$GITHUB_ENV"
+
+      - name: Integration Test
+        run: |
+          echo "PROJECT_NAME new 1: $PROJECT_NAME"
+          

@@ -1,9 +1,10 @@
 import streamlit as st
+from pathlib import Path
 from pandas import read_csv
-from companyMailSender import send_message
+from tasks.company.companyMailSender import send_message
 
 st.header('Contact Us')
-topics = read_csv('topics.csv')
+topics = read_csv(Path(__file__).resolve().parent / '../topics.csv')
 
 with st.form(key='company_email'):
     name = st.text_input('Your Name')

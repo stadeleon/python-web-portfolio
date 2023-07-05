@@ -47,6 +47,7 @@ with body_column_left:
 with body_column_right:
     for index, row in data_file[separator:].iterrows():
         st.header(row["title"])
-        st.image(str(Path(images_source, row["image"])))
+        image_path = Path(images_source, row["image"]).resolve().as_posix()
+        st.image(image_path)
         st.write(row["description"])
         st.write(f"[Source Code]({row['url']})")

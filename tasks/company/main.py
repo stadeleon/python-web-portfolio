@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-IMAGES_LOCATION = 'images'
-DATA_FRAME_FILE = 'data.csv'
+IMAGES_LOCATION = Path(__file__).resolve().parent / 'images'
+DATA_FRAME_FILE = Path(__file__).resolve().parent / 'data.csv'
 
 
 def display_column_from_data(data, start_index, stop_index):
